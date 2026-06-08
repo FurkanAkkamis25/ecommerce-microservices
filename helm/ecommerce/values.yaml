@@ -1,0 +1,48 @@
+namespace: ecommerce
+
+secrets:
+  jwtSecret: supersecretkey
+  postgresPassword: password
+
+userService:
+  image: ghcr.io/furkanakkamis25/user-service
+  tag: latest
+  replicas: 2
+  port: 3001
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+productService:
+  image: ghcr.io/furkanakkamis25/product-service
+  tag: latest
+  replicas: 2
+  port: 3002
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+orderService:
+  image: ghcr.io/furkanakkamis25/order-service
+  tag: latest
+  replicas: 1
+  port: 3003
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+database:
+  image: postgres:15-alpine
+  storage: 1Gi

@@ -1,0 +1,58 @@
+{{- range list "users" "products" "orders" }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ . }}-db
+  namespace: {{ $.Values.namespace }}
+spec:
+  serviceName: {{ . }}-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ . }}-db
+  template:
+    metadata:
+      labels:
+        app: {{ . }}-db
+    spec:
+      containers:
+        - name: postgres
+          image: {{ $.Values.database.image }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: {{ . }}db
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secrets
+                  key: postgres-password
+          volumeMounts:
+            - name: {{ . }}-db-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ . }}-db-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $.Values.database.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ . }}-db
+  namespace: {{ $.Values.namespace }}
+spec:
+  selector:
+    app: {{ . }}-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+  clusterIP: None
+{{- end }}
