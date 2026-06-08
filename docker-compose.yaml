@@ -53,6 +53,36 @@ services:
       timeout: 5s
       retries: 5
 
+  order-service:
+    build: ./services/order-service
+    ports:
+      - "3003:3003"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@orders-db:5432/ordersdb
+      JWT_SECRET: supersecretkey
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      PORT: 3003
+    depends_on:
+      orders-db:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
+  orders-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ordersdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - orders_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   users_data:
   products_data:
+  orders_data:
