@@ -1,0 +1,102 @@
+{
+  "title": "E-Commerce Microservices",
+  "uid": "ecommerce-dashboard",
+  "schemaVersion": 38,
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Servis Durumu",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 4 },
+      "targets": [
+        {
+          "expr": "up{job=~\"user-service|product-service|order-service\"}",
+          "legendFormat": "{{ job }}"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "thresholds": {
+          "steps": [
+            { "color": "red", "value": 0 },
+            { "color": "green", "value": 1 }
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Toplam HTTP İstek Sayısı (son 5dk)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(user_service_http_requests_total[5m])",
+          "legendFormat": "user-service"
+        },
+        {
+          "expr": "rate(product_service_http_requests_total[5m])",
+          "legendFormat": "product-service"
+        },
+        {
+          "expr": "rate(order_service_http_requests_total[5m])",
+          "legendFormat": "order-service"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Hata Oranı (5xx)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(user_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "user-service hatalar"
+        },
+        {
+          "expr": "rate(product_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "product-service hatalar"
+        },
+        {
+          "expr": "rate(order_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "order-service hatalar"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Node.js Heap Bellek Kullanımı",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "nodejs_heap_size_used_bytes{job=\"user-service\"}",
+          "legendFormat": "user-service heap"
+        },
+        {
+          "expr": "nodejs_heap_size_used_bytes{job=\"product-service\"}",
+          "legendFormat": "product-service heap"
+        },
+        {
+          "expr": "nodejs_heap_size_used_bytes{job=\"order-service\"}",
+          "legendFormat": "order-service heap"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Event Loop Gecikmesi",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(nodejs_eventloop_lag_seconds_sum[5m])",
+          "legendFormat": "{{ job }} lag"
+        }
+      ]
+    }
+  ]
+}

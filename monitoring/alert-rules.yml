@@ -1,0 +1,33 @@
+groups:
+  - name: ecommerce-alerts
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Servis çalışmıyor: {{ $labels.job }}"
+          description: "{{ $labels.job }} servisi 1 dakikadır yanıt vermiyor."
+
+      - alert: HighErrorRate
+        expr: |
+          rate(user_service_http_requests_total{status=~"5.."}[5m]) /
+          rate(user_service_http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Yüksek hata oranı: user-service"
+          description: "user-service hata oranı son 5 dakikada %5'i aştı."
+
+      - alert: HighErrorRateProduct
+        expr: |
+          rate(product_service_http_requests_total{status=~"5.."}[5m]) /
+          rate(product_service_http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Yüksek hata oranı: product-service"
+          description: "product-service hata oranı son 5 dakikada %5'i aştı."
