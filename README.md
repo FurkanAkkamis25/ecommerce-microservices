@@ -146,8 +146,19 @@ kubectl get pods -n ecommerce
 
 Prometheus metrikleri toplar, Grafana ile görselleştirir.
 
-- Grafana Dashboard → `http://localhost:3000`
+- Grafana Dashboard → `http://localhost:3100`
 - Prometheus → `http://localhost:9090`
+
+### Grafana Dashboard
+
+![Grafana Dashboard](docs/screenshots/grafana-dashboard.png)
+
+Dashboard panelleri:
+- **Servis Durumu** — 3 servisin anlık sağlık durumu
+- **Toplam HTTP İstek Sayısı** — Son 5 dakikadaki istek hızı
+- **Hata Oranı (5xx)** — Servis bazlı hata oranı
+- **Node.js Heap Bellek** — Bellek kullanımı
+- **Event Loop Gecikmesi** — Servis performansı
 
 ---
 
